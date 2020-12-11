@@ -1,0 +1,60 @@
+<%- include('./partials/header.ejs') %>
+    <div class="view">
+        <div class="mb-3"></div>
+        <h4>Add a new category:</h4>
+        <form id="form">
+            <div class="form-group form-row">
+                <div class="col-8">
+                    <label for="taskNameField">Category name</label>
+                    <input id="categoryNameField" type="text" name="name" class="form-control" placeholder="">
+                </div>
+                <div class="col-4">
+                    <label for="inputGroupSelect01">Color</label>
+                    <select class="custom-select" name="color" id="inputGroupSelect01">
+                        <option value="no color">No Color</option>
+                        <option value="red">Red</option>
+                        <option value="green">Green</option>
+                        <option value="blue">Blue</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group form-row">
+                <div class="col-12 d-flex" style="justify-content: right;">
+                    <input class="btn btn-primary" type="submit" value="Submit Category">
+                </div>
+            </div>
+        </form>
+        <h2>Categories on a device:</h2>
+        <div class="tasks">
+            <% categories.forEach(category => { %>
+                <div class="task" onclick="window.location='/categories/<%-category.category_id%>'">
+                    <div class="form-check form-check-inline">
+                        <label class="task-label"><%-category.name%> : <%-category.color%></label>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+    
+
+    <script>
+        $("#form").submit( function(eventObj) {
+            eventObj.preventDefault();
+            console.log("Form submited:");
+            console.log($(this).serialize());
+            $("#loadingModal").modal("show");
+            $.ajax({
+                type: 'post',
+                url: '/categories',
+                data: $(this).serialize(),
+                success: function () {
+                    location.reload();
+                },
+                error: function(xhr) {
+                    alert("Error: "+xhr.responseText);
+                    location.reload();
+                }
+            });
+        });
+    </script>
+<%- include('./partials/footer.ejs', {page: "categories"}) %>

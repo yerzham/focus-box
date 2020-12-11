@@ -1,0 +1,66 @@
+<% 
+var time_spent = 0;
+tasks.forEach(task => { 
+    time_spent += task.time_spent;
+});
+
+const time_spent_hours = Math.floor(time_spent / 3600);
+const time_spent_minutes = Math.floor((time_spent - time_spent_hours * 60) / 60);
+const time_spent_seconds = time_spent -  time_spent_hours * 3600 - time_spent_minutes * 60;
+%>
+<%- include('./partials/header.ejs') %>
+<div class="view">
+    <div class="mb-3"></div>
+    <h4><%-category.name%></h4>
+    <ul>
+        <li>Color: <%-category.color%></li>
+        <li>Time spent doing: <% if (time_spent_hours > 0) { %><%-time_spent_hours%>h <% } %><% if (time_spent_minutes > 0) { %><%-time_spent_minutes%>m <% } %><%-time_spent_seconds%>s</li>
+    </ul>
+    <form id="form">
+        <div class="form-group form-row">
+            <div class="col-6">
+                <input class="btn btn-danger" type="submit" value="Delete">
+            </div>
+            <div class="col-6 d-flex" style="justify-content: right;">
+                <button class="btn btn-secondary" onclick="window.location=document.referrer;">Go Back</button>
+            </div>
+        </div>
+    </form>
+    <h5>Tasks in the category:</h5>
+    <div class="tasks">
+        <% tasks.forEach(task => { %>
+            <div class="task" onclick="window.location='/tasks/<%-task.task_id%>'">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input task-check" type="checkbox" id="inlineCheckbox3" value="option3" disabled <% if (task.completed_on) { %>
+                        checked
+                    <% } %>>
+                    <label class="task-label"><%-task.category%> | <%-task.name%></label>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+    
+</div>
+<script>
+    $("#form").submit( function(eventObj) {
+        console.log("Form submited")
+        eventObj.preventDefault();
+        $("#loadingModal").modal("show");
+        $.ajax({
+            type: 'delete',
+            dataType : 'json',
+            url: '/api/categories/<%-category.category_id%>',
+            data: "",
+            success: function (res) {
+                console.log("Category Deleted");
+                window.location = '/categories';
+            },
+            error: function(xhr, resp, text) {
+                alert("Error: "+xhr.responseJSON.msg);
+                location.reload();
+            }
+        });
+    });
+</script>
+
+<%- include('./partials/footer.ejs', {page: "task"}) %>

@@ -1,0 +1,76 @@
+<% 
+const time_spent_hours = Math.floor(task.time_spent / 3600);
+const time_spent_minutes = Math.floor((task.time_spent - time_spent_hours * 60) / 60);
+const time_spent_seconds = task.time_spent -  time_spent_hours * 3600 - time_spent_minutes * 60; %> 
+
+<%- include('./partials/header.ejs') %>
+<div class="view">
+    <div class="mb-3"></div>
+    <h4><%-task.name%></h4>
+    <ul>
+        <li>Category: <%-task.category%></li>
+        <li>Time spent doing: <% if (time_spent_hours > 0) { %><%-time_spent_hours%>h <% } %><% if (time_spent_minutes > 0) { %><%-time_spent_minutes%>m <% } %><%-time_spent_seconds%>s</li>
+        <li>Created on: <%-task.created_on%></li>
+    </ul>
+    <form id="form">
+        <div class="form-group form-row">
+            <div class="col-6">
+                <input class="btn btn-danger" type="submit" value="Delete">
+            </div>
+            <div class="col-6 d-flex" style="justify-content: right;">
+                <input class="btn btn-primary" type="submit" value="Set Incomplete" <% if (task.completed_on==null) { %>disabled<% } %>>
+            </div>
+        </div>
+    </form>
+    <div class="mb-5"></div>
+    <div class="row">
+        <div class="col-12 d-flex" style="justify-content: right;">
+            <button class="btn btn-secondary" onclick="window.location=document.referrer;">Go Back</button>
+        </div>
+    </div>
+</div>
+<script>
+    $("#form").submit( function(eventObj) {
+        console.log("Form submited")
+        eventObj.preventDefault();
+        $("#loadingModal").modal("show");
+        var val = $("input[type=submit][clicked=true]").val();
+        if (val !== "Delete"){
+            $.ajax({
+                type: 'post',
+                dataType : 'json',
+                url: '/api/tasks/<%-task.task_id%>/complete',
+                data: JSON.stringify({complete: false}),
+                success: function (res) {
+                    location.reload();
+                },
+                error: function(xhr, resp, text) {
+                    console.log(xhr, resp, text);
+                }
+            });
+        } else {
+            $.ajax({
+                type: 'delete',
+                dataType : 'json',
+                url: '/api/tasks/<%-task.task_id%>',
+                data: JSON.stringify({complete: false}),
+                success: function (res) {
+                    console.log("Task Deleted");
+                    window.location = '/';
+                },
+                error: function(xhr, resp, text) {
+                    alert("Error: "+xhr.responseJSON.msg);
+                    location.reload;
+                }
+            });
+        }
+        
+        
+    });
+    $("form input[type=submit]").click(function() {
+        $("input[type=submit]", $(this).parents("form")).removeAttr("clicked");
+        $(this).attr("clicked", "true");
+    });
+</script>
+
+<%- include('./partials/footer.ejs', {page: "task"}) %>

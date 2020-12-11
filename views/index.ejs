@@ -1,0 +1,59 @@
+<%- include('./partials/header.ejs') %>
+    <div class="view">
+        <div class="mb-3"></div>
+        <h4>Add a new task:</h4>
+        <form id="form">
+            <div class="form-group form-row">
+                <div class="col-8">
+                    <label for="taskNameField">Task name</label>
+                    <input id="taskNameField" type="text" name="name" class="form-control" placeholder="Complete a...">
+                </div>
+                <div class="col-4">
+                    <label for="inputGroupSelect01">Category</label>
+                    <select class="custom-select" name="category_id" id="inputGroupSelect01">
+                        <% categories.forEach(category => { %>
+                            <option value="<%- category.category_id %>"><%- category.name %></option>
+                        <% }) %>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group form-row">
+                <div class="col-12 d-flex" style="justify-content: right;">
+                    <input class="btn btn-primary" type="submit" value="Submit Task">
+                </div>
+            </div>
+        </form>
+        <h2>Tasks on a device:</h2>
+        <div class="tasks">
+            <% tasks.forEach(task => { %>
+                <div class="task" onclick="window.location='/tasks/<%-task.task_id%>'">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input task-check" type="checkbox" id="inlineCheckbox3" value="option3" disabled <% if (task.completed_on) { %>
+                            checked
+                        <% } %>>
+                        <label class="task-label"><%-task.category%> | <%-task.name%></label>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+    <script>
+        $("#form").submit( function(eventObj) {
+            console.log("Form submited")
+            eventObj.preventDefault();
+            $("#loadingModal").modal("show");
+            $.ajax({
+                type: 'post',
+                url: '/',
+                data: $(this).serialize(),
+                success: function () {
+                    location.reload();
+                },
+                error: function(res) {
+                    alert("Error: " + res.responseText);
+                    location.reload();
+                }
+            });
+        });
+    </script>
+<%- include('./partials/footer.ejs', {page: "tasks"}) %>

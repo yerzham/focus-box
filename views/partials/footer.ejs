@@ -1,0 +1,37 @@
+<div class="modal fade" id="loadingModal" data-backdrop="static" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-center">
+       <div class="modal-content">
+           <div class="modal-header">
+               <h5 class="modal-title"><% if (page == "tasks") { %>Task is being added...<% } else if (page == "categories") { %>Category is being added...<% } else { %>Request is being processed...<% } %></h5>
+               </button>
+           </div>
+           <div class="modal-body">
+               
+               <p> 
+                   <div class="spinner-border text-primary" role="status">
+                       <span class="sr-only">Loading... </span>
+                   </div>
+                   Please wait. It may take up to 6 seconds.
+               </p>
+           </div>
+       </div>
+   </div>
+</div>
+<footer class="footer">
+    <div id="buttonGroup" class="btn-group selectors" role="group" aria-label="Basic example">
+       <button id="tasks" type="button" class="btn btn-secondary <% if (page == "tasks") { %> button-active <% } else { %> button-inactive <% } %>">
+          <div class="selector-holder">
+             <i class="material-icons">view_list</i>
+             <span>Tasks</span>
+          </div>
+       </button>
+       <button id="categories" type="button" class="btn btn-secondary <% if (page == "categories") { %> button-active <% } else { %> button-inactive <% } %>">
+          <div class="selector-holder">
+             <i class="material-icons">create</i>
+             <span>Categories</span>
+          </div>
+       </button>
+    </div>
+ </footer>
+</body>
+</html>

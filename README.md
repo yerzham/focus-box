@@ -1,2 +1,2 @@
-# focus-box
-Focus Box web application
+# Focus Box web application
+
